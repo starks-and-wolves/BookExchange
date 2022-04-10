@@ -60,6 +60,7 @@ studentRouter.route("/signup").post(signup);
 studentRouter.route("/loginUser").post(loginUser);
 studentRouter.route("/forgotPassword").get(forgotPassword);
 studentRouter.route("/logout").get(logout);
+studentRouter.route("/resetPassword").post(resetPassword);
 
 // studentRouter.use(protectRoute);
 
@@ -73,8 +74,8 @@ studentRouter.route('/book/:id').get(getBookByID).delete(deleteBookByID).patch(u
 studentRouter.route('/book/genre/:genre').get(getBookByGenres);
 studentRouter.route('/book').get(getAllBooks).post(addBook) ;
 
-studentRouter.route('/bookRequest/:id').post(makeBookRequest).delete(deleteBookIssueRequest).patch(patchBookRequest).get(getWaitingListOfBookRequested);
-studentRouter.route('/bookRequest').get(getWaitingListOfAllBooksRequested);
+studentRouter.route('/bookRequest/:id').delete(deleteBookIssueRequest).patch(patchBookRequest).get(getWaitingListOfBookRequested);
+studentRouter.route('/bookRequest').post(makeBookRequest).get(getWaitingListOfAllBooksRequested);
 
 studentRouter.route('/approvedBook/:id/extension').get(getExtensionStatus).post(makeextensionRequest).delete(deleteExtensionRequest).patch(updateExtensionRequest);
 studentRouter.route('/approvedBook/:id').get(getTranasactionDetails).post(returnIssuedBook);

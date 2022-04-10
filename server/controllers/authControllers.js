@@ -1,14 +1,18 @@
 const express=require("express");
-const patientModel = require('../models/patientModel');
+const userModel = require('../models/userModel');
+const bookModel = require('../models/book');
+const messageModel = require('../models/message');
+const transactionModel = require('../models/transaction');
+const adminModel = require('../models/adminModel');
 const mongoose=require('mongoose');
 const jwt=require('jsonwebtoken');
-const JWTKEY='iamgunjanagrawal';
+const JWTKEY='iamhritish';
 
 module.exports.signup = async function SignUp(req,res){
     try{
         let dataObj=req.body;
         console.log(dataObj);
-        let user = await patientModel.create(dataObj);
+        let user = await userModel.create(dataObj);
         if(user){
             return res.json({
                     ok: true,
@@ -29,11 +33,11 @@ module.exports.signup = async function SignUp(req,res){
     }
 }
 
-module.exports.login = async function loginUser(req,res){
+module.exports.loginUser = async function loginUser(req,res){
     try{
         let data = req.body;
         if(data.bitsID){
-            let user=await patientModel.findOne({'bitsID' : data.bitsID});
+            let user=await userModel.findOne({'bitsID' : data.bitsID});
             if(user){
                 if(user.password==data.password){
                     let uid=user['_id'];
@@ -100,7 +104,7 @@ module.exports.protectRoute = async function protectRoute(req,res,next){
             }
             let payload = jwt.verify(token, JWTKEY);
             if(payload){
-                const user = await patientModel.findById(payload.payload);
+                const user = await userModel.findById(payload.payload);
                 req.role=user.role;
                 req.id=user.id;
                 next();
@@ -116,11 +120,11 @@ module.exports.protectRoute = async function protectRoute(req,res,next){
     }
 }
 
-module.exports.forgetpassword = async function forgetpassword(req,res){
+module.exports.forgotPassword = async function forgotPassword(req,res){
     let {bitsID} = req.body;
     console.log(bitsID);
     try{
-        const user=await patientModel.findOne({bitsID: bitsID});
+        const user=await userModel.findOne({bitsID: bitsID});
         console.log(user);
         if(user){
             const resetToken = user.createResetToken();
@@ -148,7 +152,7 @@ module.exports.resetPassword = async function resetPassword(req,res){
         const token = req.params.token;
         console.log(token);
         let {password, confirmPassword} = req.body;
-        const user = await patientModel.findOne({resetToken: token});
+        const user = await userModel.findOne({resetToken: token});
         console.log(user);
         if(user){
             user.resetPasswordHandler(password, confirmPassword);

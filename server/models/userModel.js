@@ -31,6 +31,7 @@ var userModelSchema = new Schema({
         },
         required: [true, 'User phone number required'],
     },
+    address: {type: String},
     bitsID: {
         type: String,
         unique: true,
@@ -51,13 +52,14 @@ var userModelSchema = new Schema({
     password: { type: String, required: true },
     wishList: [{ type: String, lowercase: true }],
     booksIssued: [{type: Schema.Types.ObjectId, ref: 'transaction'}],
-    booksrequested:  [{
-        book: {type: Schema.Types.ObjectId, ref: 'book'},
-        date: {type: Date, default: Date.now},
-        message: {type: Schema.Types.ObjectId, ref: 'message'}
-    }],  
+    // booksrequested:  [{
+    //     book: {type: Schema.Types.ObjectId, ref: 'book'},
+    //     date: {type: Date, default: Date.now},
+    //     message: {type: Schema.Types.ObjectId, ref: 'message'}
+    // }],  
     booksLent: [{type: Schema.Types.ObjectId, ref: 'transaction'}], 
-                             
+    booksrequested: [{type: Schema.Types.ObjectId, ref: 'message'}],
+    messageRequestsPending: [{type: Schema.Types.ObjectId, ref: 'message'}]                          
 });
 
 module.exports = mongoose.model('user', userModelSchema);

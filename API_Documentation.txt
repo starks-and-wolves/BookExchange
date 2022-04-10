@@ -1,0 +1,81 @@
+{
+    'url': 'http://localhost:3000/student/signup' ,
+    'method': 'POST',
+    'description': 'creates a new user' ,
+    'body': {
+        "studentName": "Hritish" ,
+        "contact": "7288954026" ,
+        "bitsID": "2019A3PS0356H" ,  
+        "username": "starks-and-wolves" ,
+        "email": "f20190356@hyderabad.bits-pilani.ac.in" ,
+        "password": "123456" ,
+        "wishList": [],
+        "booksIssued": [],
+        "booksrequested":  [],  
+        booksLent: [],
+    },
+}
+
+{
+    'url': 'http://localhost:3000/student/book' ,
+    'method': 'POST',
+    'description': 'adds a new book' ,
+    'assumptions': 'user adding the book has to be manually input'
+    'body': {
+        "bookName": "Vahana Masterclass" ,
+        "authorName": "Alfredo Covelli" ,
+        "ISBN": "dlnvednnvele" ,
+        "edition": 1 ,
+        "yearOfPublishing": "2003" ,
+        "bookOwner": "62526528306b1f3e200e4076" ,
+        "publishedBy": "Oxford Pub" ,
+        "currentlyWith": "62526528306b1f3e200e4076" ,
+        "previousHolders": [],
+        "review":[{
+            "message": "great Book" ,
+            "givenBy": "62526528306b1f3e200e4076"
+        }],
+        "genre": "Horror" ,
+        "bookRequests": []
+    }
+}
+
+{
+    'url': 'http://localhost:3000/student/bookRequest' ,
+    'method': 'POST',
+    'description': 'creates a book request' ,
+    'body': {
+        "bookRequested" : "625275c2e2a3d5a2c715f718" ,
+        SenderID: "62526528306b1f3e200e4076",
+        receiverID: "625273a2e2a3d5a2c715f715" ,
+        dateofIssuing: {type: Date, required: true},
+        IssuedTill: {type: Date, required:true},
+        PlaceOfExchange: {type: String, required: true},
+        extension: {
+            extensionRequested: {type: Boolean, required: true},
+            daysExtensionRequested: {type: Date, required: true}, //ask this as input
+            orginalDateOfReturn: {type: Date, required: true}, // lies in the document already
+            newDateOfReturn: {type: Date, required: true}, // should be calculated by the backend itself, don't ask from the user
+            newPlaceOfExchange: {type: String}
+        },
+        returnedOn: {type: Date}
+    },
+}
+
+{
+    'url': ,
+    'method': ,
+    'description': ,
+    'body': {
+        
+    },
+}
+
+{
+    'url': ,
+    'method': ,
+    'description': ,
+    'body': {
+        
+    },
+}

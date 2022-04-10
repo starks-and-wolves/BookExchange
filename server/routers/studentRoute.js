@@ -10,14 +10,9 @@ const studentRouter  = express.Router();
 app.use('/student',studentRouter);
 
 const {
-    signup,
-    login,
-    forgotPassword,
-    resetPassword,
-    OTPauth,
-    protectRoute,
-    viewAllBooks,
+    getAllBooks,
     addBook,
+    updateBookByID,
     deleteBookByName,
     deleteBookByID,
     getBookByName,
@@ -27,35 +22,61 @@ const {
     getWaitingListOfBookRequested,
     getReceiveBookDates,
     getReturnBookDates,
+    getTranasactionDetails,
     viewMessageRequests,
     sendMessageRequest,
+    patchMessageRequest,
+    deleteMessageRequest,
     makeextensionRequest,
+    getExtensionStatus,
+    deleteExtensionRequest,
+    updateExtensionRequest,
     makeBookRequest,
     deleteBookIssueRequest,
+    patchBookRequest,
     returnIssuedBook,
-    makeBookReview,
+    getBookReviewsById,
+    makeBookReviewById,
+    deleteBookReviewById,
+    patchBookReviewById,
     deleteAccount
 } = require("../controllers/studentControllers");
 
 const {
-    
-
+    forgotPassword,
+    loginUser,
+    signup,
+    resetPassword,
+    protectRoute,
+    logout
 } = require("../controllers/authControllers");
 
 const { append } = require("express/lib/response");
 
+//Tested -> Signup, loginUser, logout, addBook, getAllBooks, getBookByID, getBookByGenres, 
+
+// user options
 studentRouter.route("/signup").post(signup);
-
-studentRouter.route("/login").post(login);
-
+studentRouter.route("/loginUser").post(loginUser);
+studentRouter.route("/forgotPassword").get(forgotPassword);
 studentRouter.route("/logout").get(logout);
 
-studentRouter.use(protectRoute);
+// studentRouter.use(protectRoute);
 
-studentRouter.route('/:id').get(getDoctorByID).delete(deleteDoctor).patch(updateDoctor);
-studentRouter.route('/doctor').get(getAllDoctors).post(createDoctor) ;
+//Protected Routes
+studentRouter.route('/message/:id').patch(patchMessageRequest).delete(deleteMessageRequest);
+studentRouter.route('/message').get(viewMessageRequests).post(sendMessageRequest);
 
-studentRouter.route('/validator/:id').get(getValidator).delete(deleteValidator).patch(updateValidator);
-studentRouter.route('/validator').post(createValidator).get(getAllValidators);
+studentRouter.route('/book/name/:name').get(getBookByName).delete(deleteBookByName);
+studentRouter.route('/book/:id/review').get(getBookReviewsById).post(makeBookReviewById).delete(deleteBookReviewById).patch(patchBookReviewById);
+studentRouter.route('/book/:id').get(getBookByID).delete(deleteBookByID).patch(updateBookByID);
+studentRouter.route('/book/genre/:genre').get(getBookByGenres);
+studentRouter.route('/book').get(getAllBooks).post(addBook) ;
+
+studentRouter.route('/bookRequest/:id').post(makeBookRequest).delete(deleteBookIssueRequest).patch(patchBookRequest).get(getWaitingListOfBookRequested);
+studentRouter.route('/bookRequest').get(getWaitingListOfAllBooksRequested);
+
+studentRouter.route('/approvedBook/:id/extension').get(getExtensionStatus).post(makeextensionRequest).delete(deleteExtensionRequest).patch(updateExtensionRequest);
+studentRouter.route('/approvedBook/:id').get(getTranasactionDetails).post(returnIssuedBook);
 
 module.exports = studentRouter;

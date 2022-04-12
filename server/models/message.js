@@ -18,18 +18,14 @@ var messageModelSchema = new Schema({
     receiverID: {required: true, type: Schema.Types.ObjectId, ref: 'user'},
     date: {type: Date, default: Date.now},
     
-    dateofIssuing: {type: Date, required: true},
-    IssuedTill: {type: Date, required:true},
-    PlaceOfExchange: {type: String, required: true},
+    // dateofIssuing: {type: Date, required: true},
+    // IssuedTill: {type: Date, required:true},
+    // PlaceOfExchange: {type: String, required: true},
+    noOfDays : {type: Number, required: true},
     extension: {
-        extensionRequested: {type: Boolean, required: true},
-        daysExtensionRequested: {type: Date, required: true}, //ask this as input
-        orginalDateOfReturn: {type: Date, required: true}, // lies in the document already
-        newDateOfReturn: {type: Date, required: true}, // should be calculated by the backend itself, don't ask from the user
-        newPlaceOfExchange: {type: String}
+        extensionRequested: {type: Boolean, default: false},
+        daysExtensionRequested: {type: Number, default:0, min:0, max: [15, 'extension must be less than or equal to 15'] }, //ask this as input
     },
-    returnedOn: {type: Date}
-
 });
 
 module.exports = mongoose.model('message', messageModelSchema);

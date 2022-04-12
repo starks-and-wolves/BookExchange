@@ -35,7 +35,7 @@ var BookModelSchema = new Schema({
     bookOwner : {required: true, type: Schema.Types.ObjectId, ref: 'user' },
     publishedBy: {type: String},
     currentlyWith: {required: true, type: Schema.Types.ObjectId, ref: 'user'},
-    previousHolders: [{type: Schema.Types.ObjectId, ref: 'transaction'}],
+    issuers: [{type: Schema.Types.ObjectId, ref: 'transaction'}],
     review:[{
         message: {type: String},
         givenBy: { type: Schema.Types.ObjectId, ref: 'user'},
@@ -45,14 +45,7 @@ var BookModelSchema = new Schema({
         type: String,
         required: true
     },
-    bookRequests: [{
-        requestedBy: {
-            type: Schema.Types.ObjectId, ref: 'user'
-        },
-        date: {type: Date, default: Date.now}
-    }]
-    
-
+    bookRequests: [{type: Schema.Types.ObjectId, ref: 'user'}]
 });
 
 module.exports = mongoose.model('book', BookModelSchema);

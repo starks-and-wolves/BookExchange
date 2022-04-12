@@ -48,26 +48,18 @@
         "bookRequested" : "625275c2e2a3d5a2c715f718" ,
         SenderID: "62526528306b1f3e200e4076",
         receiverID: "625273a2e2a3d5a2c715f715" ,
-        dateofIssuing: {type: Date, required: true},
-        IssuedTill: {type: Date, required:true},
-        PlaceOfExchange: {type: String, required: true},
-        extension: {
-            extensionRequested: {type: Boolean, required: true},
-            daysExtensionRequested: {type: Date, required: true}, //ask this as input
-            orginalDateOfReturn: {type: Date, required: true}, // lies in the document already
-            newDateOfReturn: {type: Date, required: true}, // should be calculated by the backend itself, don't ask from the user
-            newPlaceOfExchange: {type: String}
-        },
-        returnedOn: {type: Date}
+        "noOfDays": 10,
     },
 }
 
 {
-    'url': ,
-    'method': ,
-    'description': ,
+    'url': 'http://localhost:3000/student/approveBookRequest' ,
+    'method': 'POST',
+    'description': 'creates a book request' ,
     'body': {
-        
+        "id": "625273a2e2a3d5a2c715f715",
+        "date": "2022-04-14T13:49:12.792+00:00",
+        "PlaceOfExchange": "V-333"
     },
 }
 

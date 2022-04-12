@@ -215,6 +215,138 @@ const adminModel = require('../models/adminModel');
     
   };
 
+
+  // Make transaction object
+  // Lender-> delete messageRequestsPending -> add to books lent, add to books  currently lent as well
+  // Borrower -> delete books requested  -> add to books issued
+  // Book -> update currently with, delete book request, add to issuers list
+  module.exports.approveBookRequest = async function approveBookRequest (req,res) {
+    try {
+
+      // Create transaction object
+
+      let userID = req.body.id; // current signed in user
+      let user = await userModel.findById(userID);
+      let msgRequestID = user.messageRequestsPending[0];
+      console.log(msgRequestID);  
+      let msg = await messageModel.findById(msgRequestID);
+      let numberOfDaysToAdd=  msg.noOfDays;
+      var currentDate = new Date(req.body.date);
+      // var currentDate = new Date();
+      currentDate.setDate(currentDate.getDate() + numberOfDaysToAdd );
+      let newTransaction = {
+        bookIssued: msg.bookRequested,
+        IssuedTo: msg.SenderID,
+        IssuedBy: msg.receiverID,
+        dateofIssuing: req.body.date,
+        IssuedTill: currentDate,
+        PlaceOfExchange: req.body.PlaceOfExchange,
+      };
+
+      /* 
+      Dive.update({ _id: diveId }, { "$pull": { "divers": { "user": userIdToRemove } }}, { safe: true, multi:true }, function(err, obj) {
+      //do something smart
+      });
+      */
+
+      let createdTransaction = await transactionModel.create(newTransaction);
+
+      // Make updates to lender's document
+      // Delete msg request in lender
+      userModel.findOneAndUpdate(
+        { _id: msg.receiverID }, 
+        { $pull: { messageRequestsPending: msgRequestID  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      // Add to books lent in lender
+      userModel.findOneAndUpdate(
+        { _id: msg.receiverID }, 
+        { $push: { booksLent: createdTransaction['_id']  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      // add to books currently lent in the lender's section
+      userModel.findOneAndUpdate(
+        { _id: msg.receiverID }, 
+        { $push: { booksCurrentlyLent: createdTransaction['_id']  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+
+      // Make updates in borrower's document 
+      // Delete book request from borrower
+      userModel.findOneAndUpdate(
+        { _id: msg.SenderID }, 
+        { $pull: { booksrequested: msgRequestID  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      
+      // Add to currently issued books in borrower
+      userModel.findOneAndUpdate(
+        { _id: msg.SenderID }, 
+        { $push: { booksCurrentlyIssued: createdTransaction['_id']  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });  
+
+      // Add to books issued in borrower
+      userModel.findOneAndUpdate(
+        { _id: msg.SenderID }, 
+        { $push: { booksIssued: createdTransaction['_id']  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      // end changes in borrower        
+      
+
+      if (createdTransaction) {
+        return res.json({
+          ok: true,
+          message: "Book request Approved",
+          data: createdTransaction,
+        });
+      } else {
+        res.json({
+          ok: false,
+          message: "Error while approving book",
+        });
+      }
+
+    } catch (error) {
+      res.json({
+        ok: false,
+        message: "Some error" ,
+      });
+    }
+  }
+  // Functions written till here
+
   module.exports.deleteBookIssueRequest = async function deleteBookIssueRequest(req, res) {
     try {
       let dataObj = req.body;
@@ -264,8 +396,6 @@ const adminModel = require('../models/adminModel');
       });
     }
   };
-
-  // Functions written till here
 
   module.exports.getWaitingListOfAllBooksRequested = async function getWaitingListOfAllBooksRequested(req, res) {
       try {

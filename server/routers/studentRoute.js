@@ -39,7 +39,8 @@ const {
     makeBookReviewById,
     deleteBookReviewById,
     patchBookReviewById,
-    deleteAccount
+    deleteAccount,
+    approveBookRequest
 } = require("../controllers/studentControllers");
 
 const {
@@ -76,6 +77,8 @@ studentRouter.route('/book').get(getAllBooks).post(addBook) ;
 
 studentRouter.route('/bookRequest/:id').delete(deleteBookIssueRequest).patch(patchBookRequest).get(getWaitingListOfBookRequested);
 studentRouter.route('/bookRequest').post(makeBookRequest).get(getWaitingListOfAllBooksRequested);
+
+studentRouter.route('/approveBookRequest').post(approveBookRequest);
 
 studentRouter.route('/approvedBook/:id/extension').get(getExtensionStatus).post(makeextensionRequest).delete(deleteExtensionRequest).patch(updateExtensionRequest);
 studentRouter.route('/approvedBook/:id').get(getTranasactionDetails).post(returnIssuedBook);

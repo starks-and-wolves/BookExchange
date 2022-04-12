@@ -59,7 +59,10 @@ var userModelSchema = new Schema({
     // }],  
     booksLent: [{type: Schema.Types.ObjectId, ref: 'transaction'}], 
     booksrequested: [{type: Schema.Types.ObjectId, ref: 'message'}],
-    messageRequestsPending: [{type: Schema.Types.ObjectId, ref: 'message'}]                          
+    messageRequestsPending: [{type: Schema.Types.ObjectId, ref: 'message'}],
+    booksCurrentlyIssued: [{type: Schema.Types.ObjectId, ref: 'transaction'}],
+    booksReturned: [{type: Schema.Types.ObjectId, ref: 'transaction'}],                          
+    booksCurrentlyLent: [{type: Schema.Types.ObjectId, ref: 'transaction'}]
 });
 
 module.exports = mongoose.model('user', userModelSchema);

@@ -1,0 +1,96 @@
+.App {
+    /* text-align: center; */
+    width: 70%;
+    margin: 0% 15%;
+  }
+  
+  .App h1{
+    padding-top: 50px;
+  }
+  
+  
+  /* ============= Text_input.js ============= */
+  .input_div{
+    width:50%;
+    display: inline-block;
+    font-family: Calibri;
+    margin: 1.2% 0% 1.2% 0%;
+    /* margin: 0% 0% 0% 0%; */
+  }
+  
+  .input_div h3{
+    color: #93039D;
+  }
+  
+  /* #DBDBDB */
+  
+  
+  .input_div .text_field{
+    width: 80%;
+    background-color:  #eeeeee;
+    opacity: 100%;
+    border-radius: 3%;
+    margin: 0%;
+    border: 1px solid var(--unnamed-color-707070);
+    background: #f0efef 0% 0% no-repeat padding-box;
+    box-shadow: 0px 4px 8px #00000038;
+    /* border: 1px solid #707070; */
+    border-radius: 5px;
+    opacity: 1;
+  }
+  
+  .input_div .text_field ::placeholder {
+    color: black !important;
+    opacity: 0.48;
+    font-weight: 400 !important;
+  }
+  /* .input_div .text_field input {
+    color: black !important;
+    opacity: 1;
+  } */
+  
+  
+  /* ================= FooterButtons.js ============= */
+  
+  .FooterButtons{
+    text-align: center;
+    margin: 10% 0%;
+  
+  }
+  
+  .FooterButtons .save {
+    /* background-color: #10F800; */
+    padding: auto 2%;
+    margin: 0% 5%;
+    font-size:x-large;
+    background: transparent linear-gradient(180deg, #10F800 0%, #0DC700 100%) 0% 0% no-repeat padding-box;
+    font: normal normal normal 200%/150% Ubuntu;
+    width: 15%;
+    height: 120%;
+    border-radius: 50px;
+    opacity: 1;
+  }
+  
+  .FooterButtons .back  {
+    /* background-color: #10F800; */
+    /* padding: auto 2%;
+    margin: 0% 5%;
+    font-size:x-large; */
+    background: transparent linear-gradient(180deg, #55BAFE 0%, #0A83D3 100%) 0% 0% no-repeat padding-box;
+    font: normal normal normal 35px/47px Ubuntu;
+    width: 15%;
+    height: 60px;
+    border-radius: 50px ;
+  }
+  
+  .FooterButtons .next  {
+    /* background-color: #10F800; */
+    /* padding: auto 2%;
+    margin: 0% 5%;
+    font-size:x-large; */
+    background: transparent linear-gradient(180deg, #55BAFE 0%, #0A83D3 100%) 0% 0% no-repeat padding-box;
+    font: normal normal normal 35px/47px Ubuntu;
+    width: 15%;
+    height: 60px;
+    border-radius: 50px ;
+  }

@@ -11,6 +11,7 @@ import noMatch from './pages/noMatch';
 import userPage from './pages/userPage';
 import viewAllBooks from './pages/viewAllBooks';
 import viewBook from './pages/viewBook';
+import signUp from './pages/signUp';
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
       <Router>
         <Navbar />
         <Switch>
-          <Route path='/addBook' component={home} />
+          <Route path='/addBook' component={addBook} />
           <Route path='/bookrequest' component={bookrequest} />
           <Route path='/extensionRequest' component={extensionRequest} />
           <Route path='/messageRequest' component={messageRequest} />
@@ -26,7 +27,8 @@ function App() {
           <Route path='/userPage' component={userPage} />
           <Route path='/viewAllBooks' component={viewAllBooks} />
           <Route path='/viewBook' component={viewBook} />         
-          <Route exact path='/' component={addBook} />
+          <Route path='/signup' component={signUp} />         
+          <Route exact path='/' component={home} />
         </Switch>
       </Router>
     </>

@@ -1,7 +1,9 @@
 import React from 'react'
 
-export default function messageRequest() {
+function messageRequest() {
   return (
     <div>messageRequest</div>
   )
 }
+
+export default messageRequest

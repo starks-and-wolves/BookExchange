@@ -52,17 +52,15 @@ var userModelSchema = new Schema({
     password: { type: String, required: true },
     wishList: [{ type: String, lowercase: true }],
     booksIssued: [{type: Schema.Types.ObjectId, ref: 'transaction'}],
-    // booksrequested:  [{
-    //     book: {type: Schema.Types.ObjectId, ref: 'book'},
-    //     date: {type: Date, default: Date.now},
-    //     message: {type: Schema.Types.ObjectId, ref: 'message'}
-    // }],  
     booksLent: [{type: Schema.Types.ObjectId, ref: 'transaction'}], 
     booksrequested: [{type: Schema.Types.ObjectId, ref: 'message'}],
     messageRequestsPending: [{type: Schema.Types.ObjectId, ref: 'message'}],
     booksCurrentlyIssued: [{type: Schema.Types.ObjectId, ref: 'transaction'}],
     booksReturned: [{type: Schema.Types.ObjectId, ref: 'transaction'}],                          
-    booksCurrentlyLent: [{type: Schema.Types.ObjectId, ref: 'transaction'}]
+    booksReceived: [{type: Schema.Types.ObjectId, ref: 'transaction'}],                          
+    booksCurrentlyLent: [{type: Schema.Types.ObjectId, ref: 'transaction'}],
+    penaltyToPay: [{type: Schema.Types.ObjectId, ref: 'transaction'}],
+    penaltyToTake: [{type: Schema.Types.ObjectId, ref: 'transaction'}]
 });
 
 module.exports = mongoose.model('user', userModelSchema);

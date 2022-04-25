@@ -18,8 +18,6 @@ const {
     getBookByName,
     getBookByID,
     getBookByGenres,
-    getWaitingListOfAllBooksRequested,
-    getWaitingListOfBookRequested,
     getReceiveBookDates,
     getReturnBookDates,
     getTranasactionDetails,
@@ -27,7 +25,7 @@ const {
     sendMessageRequest,
     patchMessageRequest,
     deleteMessageRequest,
-    makeextensionRequest,
+    makeextensionRequest,       
     getExtensionStatus,
     deleteExtensionRequest,
     updateExtensionRequest,
@@ -75,12 +73,29 @@ studentRouter.route('/book/:id').get(getBookByID).delete(deleteBookByID).patch(u
 studentRouter.route('/book/genre/:genre').get(getBookByGenres);
 studentRouter.route('/book').get(getAllBooks).post(addBook) ;
 
-studentRouter.route('/bookRequest/:id').delete(deleteBookIssueRequest).patch(patchBookRequest).get(getWaitingListOfBookRequested);
-studentRouter.route('/bookRequest').post(makeBookRequest).get(getWaitingListOfAllBooksRequested);
+studentRouter.route('/bookRequest/:id').delete(deleteBookIssueRequest).patch(patchBookRequest);
+studentRouter.route('/bookRequest').post(makeBookRequest);
 
 studentRouter.route('/approveBookRequest').post(approveBookRequest);
 
-studentRouter.route('/approvedBook/:id/extension').get(getExtensionStatus).post(makeextensionRequest).delete(deleteExtensionRequest).patch(updateExtensionRequest);
-studentRouter.route('/approvedBook/:id').get(getTranasactionDetails).post(returnIssuedBook);
+studentRouter.route('/approvedBook/extension').get(getExtensionStatus).post(makeextensionRequest).delete(deleteExtensionRequest).patch(updateExtensionRequest);
+studentRouter.route('/approvedBook/:id').get(getTranasactionDetails);
+studentRouter.route('/returnBook').post(returnIssuedBook);
 
 module.exports = studentRouter;
+
+/*
+make users*
+add books*
+make message req*
+approve msg req*
+return book*
+ask for ext*
+app ext req
+view appr deadlines for return
+view appr deadlines for receiving books
+pay penalty
+add moni to wallet
+
+
+*/

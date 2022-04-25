@@ -24,9 +24,12 @@ var transactionModelSchema = new Schema({
         daysExtensionRequested: {type: Number, default: 0, max:[15, "extension must be less than or equal to 15 days"], min: 0}, //ask this as input
         orginalDateOfReturn: {type: Date}, // lies in the document already
         newDateOfReturn: {type: Date}, // should be calculated by the backend itself, don't ask from the user
-        newPlaceOfExchange: {type: String}
     },
-    returnedOn: {type: Date}
+    returnedOn: {type: Date},
+    penalty: {
+        amount: {type: Number, default: 0},
+        paidOn: {type: Date}
+    }
 
 });
 

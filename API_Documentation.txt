@@ -53,6 +53,16 @@
 }
 
 {
+    'url': 'http://localhost:3000/student/returnBook' ,
+    'method': 'POST',
+    'description': 'returns an issued book' ,
+    'body': {
+        "id": "625457c501a228e261f43d62",
+        "transactionId": "62552303accfe3c36b4f6bac"
+    },
+}
+
+{
     'url': 'http://localhost:3000/student/approveBookRequest' ,
     'method': 'POST',
     'description': 'creates a book request' ,
@@ -64,10 +74,33 @@
 }
 
 {
-    'url': ,
-    'method': ,
-    'description': ,
+    'url': 'http://localhost:3000/student/approvedBook/extension' ,
+    'method': 'POST',
+    'description': 'creates an extension request' ,
     'body': {
-        
+        "id": "625273a2e2a3d5a2c715f715",
+        "daysExtensionRequested": 5,
+        "transactionId": "",
+        "newPlaceOfExchange": "V-335"
+    },
+}
+
+{
+    'url': 'http://localhost:3000/student/payPenalty' ,
+    'method': 'POST',
+    'description': 'pay book penalty' ,
+    'body': {
+        "id": "625273a2e2a3d5a2c715f715",
+        "transactionID": ""
+    },
+}
+
+{
+    'url': 'http://localhost:3000/student/payPenalty' ,
+    'method': 'POST',
+    'description': 'pay book penalty' ,
+    'body': {
+        "id": "625273a2e2a3d5a2c715f715",
+        "transactionID": ""
     },
 }

@@ -185,7 +185,7 @@ const adminModel = require('../models/adminModel');
         let bookID = dataObj.bookRequested;
         bookModel.findOneAndUpdate(
           { _id: bookID }, 
-          { $push: { bookRequests: dataObj.SenderID  } },
+          { $push: { bookRequests: bookReqID} },
          function (error, success) {
                if (error) {
                    console.log(error);
@@ -215,7 +215,6 @@ const adminModel = require('../models/adminModel');
     
   };
 
-
   // Make transaction object
   // Lender-> delete messageRequestsPending -> add to books lent, add to books  currently lent as well
   // Borrower -> delete books requested  -> add to books issued
@@ -241,6 +240,9 @@ const adminModel = require('../models/adminModel');
         dateofIssuing: req.body.date,
         IssuedTill: currentDate,
         PlaceOfExchange: req.body.PlaceOfExchange,
+        extension: {
+          orginalDateOfReturn: currentDate
+        }
       };
 
       /* 
@@ -250,6 +252,42 @@ const adminModel = require('../models/adminModel');
       */
 
       let createdTransaction = await transactionModel.create(newTransaction);
+
+      // Make updates to book document
+      // Delete book request in book document
+      bookModel.findOneAndUpdate(
+        { _id: msg.bookRequested }, 
+        { $pull: { bookRequests: msgRequestID  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      // Add to issuers in book document
+      bookModel.findOneAndUpdate(
+        { _id: msg.bookRequested }, 
+        { $push: { issuers: createdTransaction['_id']  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      // update currently with in book model
+      bookModel.findOneAndUpdate(
+        { _id: msg.bookRequested }, { currentlyWith: msg.SenderID  } ,
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+
+      
 
       // Make updates to lender's document
       // Delete msg request in lender
@@ -323,7 +361,6 @@ const adminModel = require('../models/adminModel');
               }
       });
       // end changes in borrower        
-      
 
       if (createdTransaction) {
         return res.json({
@@ -345,6 +382,215 @@ const adminModel = require('../models/adminModel');
       });
     }
   }
+
+  // return book function
+  // Check for penalty*
+  // update transaction -> returnedOn: {type: Date}, add penalty*
+  // book doc -> currentlyWith (user) *
+  // borrower -> booksCurrentlyIssued (delete), booksReturned (add->trnx id)
+  // lender -> booksCurrentlyLent (delete), booksReceived (add->trnx id)*
+  // Add penalty in user models*
+
+  module.exports.returnIssuedBook = async function returnIssuedBook (req,res) {
+    try {
+
+      // Create transaction object
+
+      let userID = req.body.id; // current signed in user -> the borrower in this case
+      let user = await userModel.findById(userID);
+      let trnx = await transactionModel.findById(req.body.transactionId);
+      var penalty=0; var currentDate = new Date();
+      if((trnx.IssuedTill.getDate() - currentDate.getDate() )<0){
+        penalty = ( currentDate.getDate() - trnx.IssuedTill.getDate() )*5;
+      }
+      // Check if penalty is there, if yes, then add penaltyToTake in lender and penaltyToPay in borrower's document
+      if(penalty>0){
+        // lender's document
+        userModel.findOneAndUpdate(
+          { _id: trnx.IssuedBy }, 
+          { $push: { penaltyToTake: trnx['_id']  } },
+          function (error, success) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log(success);
+                }
+        });
+        // Borrower's document
+        userModel.findOneAndUpdate(
+          { _id: trnx.IssuedTo }, 
+          { $push: { penaltyToPay: trnx['_id']  } },
+          function (error, success) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log(success);
+                }
+        });
+      }  
+      
+      // Make updates to transaction document
+      // Updating return date in transaction document
+      transactionModel.findOneAndUpdate(
+        { _id: req.body.transactionId }, { returnedOn: currentDate  } ,
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      // Add penalty in transaction document
+      transactionModel.findOneAndUpdate(
+        { _id: req.body.transactionId }, 
+        { penalty: { amount: penalty} },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      
+      // Make updates in Book document
+      // update currently with in book model
+      bookModel.findOneAndUpdate(
+        { _id: trnx.bookIssued }, { currentlyWith: trnx.IssuedBy } ,
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+
+      // Make updates to lender's document
+      // Delete book from CurrentlyLent in lender
+      userModel.findOneAndUpdate(
+        { _id: trnx.IssuedBy }, 
+        { $pull: { booksCurrentlyLent: trnx['_id']  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      // Add to books received in lender
+      userModel.findOneAndUpdate(
+        { _id: trnx.IssuedBy }, 
+        { $push: { booksReceived: trnx['_id']  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+
+      // Make updates to borrower's document
+      // add to books returned in the borrower's section
+      userModel.findOneAndUpdate(
+        { _id: trnx.IssuedTo }, 
+        { $push: { booksReturned: trnx['_id']  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });
+      // Delete book from booksCurrentlyIssued in borrower
+      userModel.findOneAndUpdate(
+        { _id: trnx.IssuedTo }, 
+        { $pull: { booksCurrentlyIssued: trnx['_id']  } },
+        function (error, success) {
+              if (error) {
+                  console.log(error);
+              } else {
+                  console.log(success);
+              }
+      });      
+      return res.json({
+        ok: true,
+        message: "Book returned successfully"
+      });
+
+    } catch (error) {
+      res.json({
+        ok: false,
+        message: "Some error" ,
+      });
+    }
+  }
+
+  // Extension Request function
+  // body -> no. of  days extension daysExtensionRequested, trnxID, userID, 
+  // if already exceeded, then not allowed
+  // if not, then send req
+  // trnxModel -> extension, IssuedTill
+  module.exports.makeextensionRequest = async function makeextensionRequest(req, res) {
+    try {
+      if(req.body.daysExtensionRequested>15){
+        return res.json({
+          ok: false,
+          message: "Extension can bnot be greater than 15 days"
+        });
+      }
+      let trnx = await transactionModel.findById(req.body.transactionId);
+      var currentDate = new Date();
+      if(trnx.extension.extensionRequested){
+        return res.json({
+          ok: false,
+          message: "Extension can be given only once"
+        });
+      }
+      if(currentDate.getDate()>trnx.IssuedTill.getDate()){
+        return res.json({
+          ok: false,
+          message: "Extension cannot be granted as deadline already exceeded"
+        });
+      }
+
+      var newDateOfReturn = trnx.IssuedTill;
+      newDateOfReturn.setDate(newDateOfReturn.getDate() + req.body.daysExtensionRequested );
+
+      // update IssuedTill in transaction document
+      // transactionModel.findOneAndUpdate(
+      //   { _id: req.body.transactionId }, { IssuedTill: newDateOfReturn  } ,
+      //   function (error, success) {
+      //         if (error) {
+      //             console.log(error);
+      //         } else {
+      //             console.log(success);
+      //         }
+      // });
+      
+      // update extension field in transaction document
+      transactionModel.findOneAndUpdate(
+        { _id: req.body.transactionId }, { extension: {
+          extensionRequested: true, daysExtensionRequested: req.body.daysExtensionRequested, newDateOfReturn: newDateOfReturn}
+          , IssuedTill: newDateOfReturn, PlaceOfExchange: req.body.newPlaceOfExchange
+        },
+        function (error, success) {
+              if (error) {
+                  console.log("whee");
+              } else {
+                  console.log(success);
+              }
+      });
+      return res.json({
+        ok: true,
+        message: "Extension request successfully made",
+        // data: updatedtrnx
+      });
+    } catch (error) {
+      res.json({
+        message: "error from catch block"
+      });
+    }    
+  };
+
   // Functions written till here
 
   module.exports.deleteBookIssueRequest = async function deleteBookIssueRequest(req, res) {
@@ -373,56 +619,6 @@ const adminModel = require('../models/adminModel');
   };
 
   module.exports.patchBookRequest = async function patchBookRequest(req, res) {
-    try {
-      let dataObj = req.body;
-      console.log(dataObj);
-      let validator = await validatorModel.create(dataObj);
-      if (validator) {
-        return res.json({
-          ok: true,
-          message: "Validator created successfully",
-          data: validator,
-        });
-      } else {
-        res.json({
-          ok: false,
-          message: "Error while creating validator",
-        });
-      }
-    } catch (err) {
-      res.json({
-        ok: false,
-        message: err.message,
-      });
-    }
-  };
-
-  module.exports.getWaitingListOfAllBooksRequested = async function getWaitingListOfAllBooksRequested(req, res) {
-      try {
-        let dataObj = req.body;
-        console.log(dataObj);
-        let validator = await validatorModel.create(dataObj);
-        if (validator) {
-          return res.json({
-            ok: true,
-            message: "Validator created successfully",
-            data: validator,
-          });
-        } else {
-          res.json({
-            ok: false,
-            message: "Error while creating validator",
-          });
-        }
-      } catch (err) {
-        res.json({
-          ok: false,
-          message: err.message,
-        });
-      }
-    };
-
-  module.exports.getWaitingListOfBookRequested = async function getWaitingListOfBookRequested(req, res) {
     try {
       let dataObj = req.body;
       console.log(dataObj);
@@ -622,31 +818,6 @@ const adminModel = require('../models/adminModel');
     }
   };
 
-  module.exports.makeextensionRequest = async function makeextensionRequest(req, res) {
-    try {
-      let dataObj = req.body;
-      console.log(dataObj);
-      let validator = await validatorModel.create(dataObj);
-      if (validator) {
-        return res.json({
-          ok: true,
-          message: "Validator created successfully",
-          data: validator,
-        });
-      } else {
-        res.json({
-          ok: false,
-          message: "Error while creating validator",
-        });
-      }
-    } catch (err) {
-      res.json({
-        ok: false,
-        message: err.message,
-      });
-    }
-  };
-
   //dummy function
   module.exports.getExtensionStatus = async function getExtensionStatus(req, res) {
     try {
@@ -723,31 +894,6 @@ const adminModel = require('../models/adminModel');
     }
   };
 
-
-  module.exports.returnIssuedBook = async function returnIssuedBook(req, res) {
-    try {
-      let dataObj = req.body;
-      console.log(dataObj);
-      let validator = await validatorModel.create(dataObj);
-      if (validator) {
-        return res.json({
-          ok: true,
-          message: "Validator created successfully",
-          data: validator,
-        });
-      } else {
-        res.json({
-          ok: false,
-          message: "Error while creating validator",
-        });
-      }
-    } catch (err) {
-      res.json({
-        ok: false,
-        message: err.message,
-      });
-    }
-  };
 
   module.exports.getBookReviewsById = async function getBookReviewsById(req, res) {
     try {

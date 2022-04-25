@@ -45,7 +45,7 @@ var BookModelSchema = new Schema({
         type: String,
         required: true
     },
-    bookRequests: [{type: Schema.Types.ObjectId, ref: 'user'}]
+    bookRequests: [{type: Schema.Types.ObjectId, ref: 'message'}]
 });
 
 module.exports = mongoose.model('book', BookModelSchema);

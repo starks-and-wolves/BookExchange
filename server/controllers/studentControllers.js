@@ -1,8 +1,8 @@
-const userModel = require('../models/userModel');
+const userModel = require('../models/user');
 const bookModel = require('../models/book');
 const messageModel = require('../models/message');
 const transactionModel = require('../models/transaction');
-const adminModel = require('../models/adminModel');
+const adminModel = require('../models/admin');
 
   module.exports.addBook = async function addBook(req, res) {
       try {

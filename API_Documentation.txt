@@ -1,5 +1,5 @@
 {
-    'url': 'http://localhost:3000/student/signup' ,
+    'url': 'http://localhost:8080/student/signup' ,
     'method': 'POST',
     'description': 'creates a new user' ,
     'body': {

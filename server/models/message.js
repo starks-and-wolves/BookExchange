@@ -26,6 +26,8 @@ var messageModelSchema = new Schema({
         extensionRequested: {type: Boolean, default: false},
         daysExtensionRequested: {type: Number, default:0, min:0, max: [15, 'extension must be less than or equal to 15'] }, //ask this as input
     },
+    messageFromBorrower: String,
+    messageFromOwner: String
 });
 
 module.exports = mongoose.model('message', messageModelSchema);

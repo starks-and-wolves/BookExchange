@@ -1,10 +1,10 @@
 var mongoose = require("mongoose");
-
 var Schema = mongoose.Schema;
-
+const jwt = require("jsonwebtoken");
 var { isEmail } = require("validator");
 const bcrypt = require("bcrypt");
-
+const res = require("express/lib/response");
+const JWTKEY = "iamhritish";
 const db_link =
   "mongodb+srv://hritishjain:Ns2A9tVsH7JeytJQ@cluster0.piemw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 mongoose
@@ -65,6 +65,13 @@ var userModelSchema = new Schema({
   booksCurrentlyLent: [{ type: Schema.Types.ObjectId, ref: "transaction" }],
   penaltyToPay: [{ type: Schema.Types.ObjectId, ref: "transaction" }],
   penaltyToTake: [{ type: Schema.Types.ObjectId, ref: "transaction" }],
+  tokens: [
+    {
+      token: {
+        type: String,
+      },
+    },
+  ],
 });
 
 userModelSchema.pre("save", async function (next) {
@@ -75,5 +82,20 @@ userModelSchema.pre("save", async function (next) {
   }
   next();
 });
+
+userModelSchema.methods.generateAuthToken = async function () {
+  try {
+    let token = jwt.sign({ _id: this._id }, JWTKEY);
+    this.tokens = this.tokens.concat({ token: token });
+    await this.save();
+    console.log(token);
+    return token;
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      message: "From catch",
+    });
+  }
+};
 
 module.exports = mongoose.model("user", userModelSchema);

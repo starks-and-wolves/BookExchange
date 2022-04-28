@@ -119,6 +119,7 @@ module.exports.SignUp = async function SignUp(req, res) {
 
 module.exports.loginUser = async function loginUser(req, res) {
   try {
+    let token;
     console.log(req.body);
     const { email, password } = req.body;
 
@@ -132,11 +133,25 @@ module.exports.loginUser = async function loginUser(req, res) {
     if (user) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        let uid = user["_id"];
-        let token = jwt.sign({ payload: uid }, JWTKEY);
-        res.cookie("login", token, { httpOnly: true });
-        res.cookie("userid", uid, { httpOnly: true });
-        console.log("logged in successfully");
+        // let uid = user["_id"];
+        // let token = jwt.sign({ payload: uid }, JWTKEY);
+        // res.cookie("login", token, { httpOnly: true });
+        // res.cookie("userid", uid, { httpOnly: true });
+        // console.log("logged in successfully");
+        // return res.json({
+        //   ok: true,
+        //   message: "user has logged in",
+        //   idToken: token,
+        //   userDetails: user,
+        // });
+        token = await user.generateAuthToken();
+        console.log(token);
+
+        res.cookie("jwtoken", token, {
+          expires: new Date(Date.now + 2589200000),
+          httpOnly: true,
+        });
+
         return res.json({
           ok: true,
           message: "user has logged in",

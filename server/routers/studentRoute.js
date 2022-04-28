@@ -1,13 +1,16 @@
 const express = require("express");
-
+const cookieParser = require("cookie-parser");
 const app = express();
 
 app.listen("8080");
-
+app.use(cookieParser());
 app.use(express.json());
+
 
 const studentRouter = express.Router();
 app.use("/student", studentRouter);
+
+const Authenticate = require("../middlewares/Authenticate");
 
 const {
   getAllBooks,
@@ -39,6 +42,7 @@ const {
   patchBookReviewById,
   deleteAccount,
   approveBookRequest,
+  getUser,
 } = require("../controllers/studentControllers");
 
 const {
@@ -64,6 +68,7 @@ studentRouter.route("/resetPassword").post(resetPassword);
 // studentRouter.use(protectRoute);
 
 //Protected Routes
+studentRouter.route("/user/:id").get(Authenticate, getUser);
 studentRouter
   .route("/message/:id")
   .patch(patchMessageRequest)
@@ -89,7 +94,8 @@ studentRouter
   .delete(deleteBookByID)
   .patch(updateBookByID);
 studentRouter.route("/book/genre/:genre").get(getBookByGenres);
-studentRouter.route("/book").get(getAllBooks).post(addBook);
+studentRouter.route("/user").get(Authenticate, getUser);
+studentRouter.route("/book").get(getAllBooks).post(Authenticate, addBook);
 
 studentRouter
   .route("/bookRequest/:id")

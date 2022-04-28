@@ -6,7 +6,6 @@ app.listen("8080");
 app.use(cookieParser());
 app.use(express.json());
 
-
 const studentRouter = express.Router();
 app.use("/student", studentRouter);
 
@@ -104,6 +103,9 @@ studentRouter
 studentRouter.route("/bookRequest").post(makeBookRequest);
 
 studentRouter.route("/approveBookRequest").post(approveBookRequest);
+// studentRouter.route("/wallet/:id").get(viewWallet);
+// studentRouter.route("/wallet/addMoney").patch(addMoney);
+// studentRouter.route("/wallet/payPenalty").post(payPenalty);
 
 studentRouter
   .route("/approvedBook/extension")

@@ -4,6 +4,7 @@ const messageModel = require("../models/message");
 const transactionModel = require("../models/transaction");
 const adminModel = require("../models/admin");
 const { reset } = require("nodemon");
+const { findByIdAndUpdate } = require("../models/book");
 
 module.exports.getUser = async function getUser(req, res) {
   try {
@@ -27,8 +28,18 @@ module.exports.addBook = async function addBook(req, res) {
   try {
     let dataObj = req.body;
     console.log(dataObj);
-    console.log(req.userID);
     let book = await bookModel.create(dataObj);
+    userModel.findOneAndUpdate(
+      { _id: dataObj.bookOwner },
+      { $push: { booksowned: book._id } },
+      function (error, success) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(success);
+        }
+      }
+    );
     if (book) {
       return res.json({
         ok: true,
@@ -642,6 +653,43 @@ module.exports.makeextensionRequest = async function makeextensionRequest(
   }
 };
 
+// module.exports.payPenalty = async function payPenalty(req, res) {
+//   try {
+//     let userID = req.body.id;
+//     let transactionId = req.body.transactionId;
+//     let receiverID = transactionId.IssuedBy;
+//     // console.log(userID);
+//     let user = await userModel.findById(userID);
+//     let penaltyToPay = user.penaltyToPay;
+//     if (user.wallet < user.penaltyToPay) {
+//       return res.json({
+//         ok: false,
+//         message: "Insufficient funds",
+//       });
+//     } else {
+//       let walletValue = user.wallet - penaltyToPay;
+//       let walletValue1 = user.wallet - penaltyToPay;
+//       findByIdAndUpdate({ id: user._id }, { wallet: walletValue });
+//       findByIdAndUpdate({id: receiverID},{
+//         wallet:
+//       })
+//       return res.json({
+//         ok: false,
+//         message: "Money Deducted",
+//       });
+//     }
+//     return res.json({
+//       ok: true,
+//       data: user,
+//     });
+//   } catch (err) {
+//     console.log("from catch");
+//     res.json({
+//       ok: false,
+//       message: err.message,
+//     });
+//   }
+// };
 // Functions written till here
 
 module.exports.deleteBookIssueRequest = async function deleteBookIssueRequest(

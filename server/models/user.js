@@ -65,6 +65,7 @@ var userModelSchema = new Schema({
   booksCurrentlyLent: [{ type: Schema.Types.ObjectId, ref: "transaction" }],
   penaltyToPay: [{ type: Schema.Types.ObjectId, ref: "transaction" }],
   penaltyToTake: [{ type: Schema.Types.ObjectId, ref: "transaction" }],
+  wallet: { type: Number },
   tokens: [
     {
       token: {

@@ -1,16 +1,13 @@
 var mongoose = require("mongoose");
 
 let db_link = process.env.DB_LINK;
-
+// console.log(db_link);
 let db;
 
 mongoose
-  .connect(db_link, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }) // database link => promise based function
+  .connect(db_link) // database link => promise based function
   .then((db_) => {
-    // console.log(db_);
+    // console.log(db);
     db = db_;
     console.log("DB connected");
   })

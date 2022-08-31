@@ -190,7 +190,7 @@ module.exports.isAuthorised = function isAuthorised(roles) {
         message: "operation not allowed",
       });
     }
-  };
+  };  
 };
 
 module.exports.protectRoute = async function protectRoute(req, res, next) {
